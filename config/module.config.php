@@ -245,6 +245,7 @@ return array(
             'session_manager'           => 'Vivo\Service\SessionManagerFactory',
             'mime'                      => 'Vivo\Util\MIMEFactory',
             'indexer_events'            => 'Vivo\Indexer\EventManagerFactory',
+            'Vivo\component_state_persistor'    => 'Vivo\UI\ComponentStatePersistorFactory',
         ),
         'aliases' => array(
             'Vivo\SiteManager\Event\SiteEvent'  => 'site_event',

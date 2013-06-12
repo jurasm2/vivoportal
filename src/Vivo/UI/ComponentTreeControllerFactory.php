@@ -12,9 +12,8 @@ class ComponentTreeControllerFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new ComponentTreeController(
-                $serviceLocator->get('session_manager'),
-                $serviceLocator->get('request')
-                );
+        $statePersistor             = $serviceLocator->get('Vivo\component_state_persistor');
+        $componentTreeController    = new ComponentTreeController($statePersistor);
+        return $componentTreeController;
     }
 }

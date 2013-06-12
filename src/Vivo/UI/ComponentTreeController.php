@@ -23,29 +23,23 @@ class ComponentTreeController implements EventManagerAwareInterface
     protected $root;
 
     /**
-     * @var \Zend\Session\Container
-     */
-    protected $session;
-
-    /**
-     * @var Request
-     */
-    protected $request;
-
-    /**
      * @var \Zend\EventManager\EventManagerInterface
      */
     protected $events;
 
     /**
-     * Constructor.
-     * @param SessionManager $sessionManager
-     * @param \Zend\Http\PhpEnvironment\Request $request
+     * Component state persistor
+     * @var ComponentStatePersistor
      */
-    public function __construct(SessionManager $sessionManager, Request $request)
+    protected $statePersistor;
+
+    /**
+     * Constructor
+     * @param ComponentStatePersistor $statePersistor
+     */
+    public function __construct(ComponentStatePersistor $statePersistor)
     {
-        $this->session = new Container('component_states', $sessionManager);
-        $this->request = $request;
+        $this->statePersistor   = $statePersistor;
     }
 
     /**
@@ -133,12 +127,7 @@ class ComponentTreeController implements EventManagerAwareInterface
     {
         foreach ($this->getTreeIterator() as $component){
             if ($component instanceof PersistableInterface){
-                $message = 'Load component state: ' . $component->getPath();
-                $this->events->trigger('log', $this, array('message' => $message,
-                'priority'=> \VpLogger\Log\Logger::PERF_FINER));
-                $key = $this->request->getUri()->getPath(). $component->getPath();
-                $state = $this->session[$key];
-                $component->loadState($state);
+                $this->statePersistor->loadState($component);
             }
         }
     }
@@ -150,10 +139,7 @@ class ComponentTreeController implements EventManagerAwareInterface
     {
         foreach ($this->getTreeIterator() as $component) {
             if ($component instanceof PersistableInterface){
-                $message = 'Save component state: ' . $component->getPath();
-                $this->events->trigger('log', $this, array('message' => $message, 'priority'=> \VpLogger\Log\Logger::PERF_FINER));
-                $key = $this->request->getUri()->getPath(). $component->getPath();
-                $this->session[$key] = $component->saveState();
+                $this->statePersistor->saveState($component);
             }
         }
     }

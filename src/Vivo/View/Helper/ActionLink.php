@@ -7,7 +7,7 @@ use Zend\View\Helper\AbstractHelper;
 
 /**
  * View helper for getting action url
- */
+*/
 class ActionLink extends AbstractHelper
 {
     public function __invoke($action, $linkText, $queryArgs = array(), $reuseMatchedParams = false)

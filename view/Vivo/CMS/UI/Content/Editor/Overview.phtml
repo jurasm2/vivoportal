@@ -1,3 +1,9 @@
 <?php
 $formType = \DluTwBootstrap\Form\FormUtil::FORM_TYPE_HORIZONTAL;
-echo $this->formFieldsetTwb($form, $formType, array(), false, false);
+/** @var $overviewTypeElement \Vivo\Form\Element\Select */
+$overviewTypeElement    = $form->get('overviewType');
+$overviewTypeElement->setAttribute('onchange',
+    sprintf('this.form.act.value = "%s"; this.form.submit();', $this->action('changeOverviewType')));
+echo $this->formRowTwb($overviewTypeElement, $formType);
+echo $this->formFieldsetTwb($form->get('contentFieldset'), $formType, array(), false, false);
+
