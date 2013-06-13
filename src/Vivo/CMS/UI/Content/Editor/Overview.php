@@ -46,11 +46,18 @@ class Overview extends AbstractForm implements EditorInterface, PersistableInter
         $this->autoAddCsrf = false;
     }
 
+    /**
+     * Sets content
+     * @param \Vivo\CMS\Model\Content $content
+     */
     public function setContent(Model\Content $content)
     {
         $this->content = $content;
     }
 
+    /**
+     * Component init method
+     */
     public function init()
     {
         $this->statePersistor->loadState($this);
@@ -62,6 +69,10 @@ class Overview extends AbstractForm implements EditorInterface, PersistableInter
         parent::init();
     }
 
+    /**
+     * Save content
+     * @param \Vivo\CMS\Model\ContentContainer $contentContainer
+     */
     public function save(Model\ContentContainer $contentContainer)
     {
         if($this->getForm()->isValid()) {
@@ -75,6 +86,10 @@ class Overview extends AbstractForm implements EditorInterface, PersistableInter
         }
     }
 
+    /**
+     * Returns form
+     * @return \Vivo\Form\Form
+     */
     public function doGetForm()
     {
         $form = new Form('editor-'.$this->content->getUuid());
@@ -98,9 +113,9 @@ class Overview extends AbstractForm implements EditorInterface, PersistableInter
         if ($overviewType == OverviewModel::TYPE_STATIC) {
             //Static overview
             $contentFieldset->add(array(
-             'name' => 'overviewItems',
-             'type' => 'Vivo\Form\Element\Textarea',
-             'options' => array('label' => 'items'),
+                'name' => 'overviewItems',
+                'type' => 'Vivo\Form\Element\Textarea',
+                'options' => array('label' => 'items'),
             ));
         } else {
             //Dynamic overview or not specified
@@ -128,6 +143,9 @@ class Overview extends AbstractForm implements EditorInterface, PersistableInter
         return $form;
     }
 
+    /**
+     * Action for changing for overview type
+     */
     public function changeOverviewType()
     {
         $form   = $this->getForm();
@@ -137,16 +155,29 @@ class Overview extends AbstractForm implements EditorInterface, PersistableInter
         $this->events->trigger(new \Vivo\Util\RedirectEvent());
     }
 
+    /**
+     * Saves state
+     * @return string
+     */
     public function saveState()
     {
         return $this->overviewType;
     }
 
+    /**
+     * Loads state
+     * @param string $state
+     */
     public function loadState($state)
     {
         $this->overviewType = $state;
     }
 
+    /**
+     * Populates form
+     * @param \Vivo\CMS\Model\Content\Overview $overviewModel
+     * @param \Vivo\Form\Form $form
+     */
     protected function populateForm(OverviewModel $overviewModel, Form $form)
     {
         $contentFieldset    = $form->get('contentFieldset');
@@ -156,10 +187,17 @@ class Overview extends AbstractForm implements EditorInterface, PersistableInter
         } else {
             //Dynamic
             $contentFieldset->get('overviewPath')->setValue($overviewModel->getOverviewPath());
-            //TODO - other dynamic elements
+            $contentFieldset->get('overviewSorting')->setValue($overviewModel->getOverviewSorting());
+            $contentFieldset->get('overviewCriteria')->setValue($overviewModel->getOverviewCriteria());
+            $contentFieldset->get('overviewLimit')->setValue($overviewModel->getOverviewLimit());
         }
     }
 
+    /**
+     * Hydrates object
+     * @param \Vivo\CMS\Model\Content\Overview $overviewModel
+     * @param array $data
+     */
     protected function hydrateObject(OverviewModel $overviewModel, array $data)
     {
         $overviewType   = $data['overviewType'];
@@ -170,7 +208,9 @@ class Overview extends AbstractForm implements EditorInterface, PersistableInter
         } else {
             //Dynamic
             $overviewModel->setOverviewPath($data['contentFieldset']['overviewPath']);
-            //TODO - other dynamic elements
+            $overviewModel->setOverviewSorting($data['contentFieldset']['overviewSorting']);
+            $overviewModel->setOverviewCriteria($data['contentFieldset']['overviewCriteria']);
+            $overviewModel->setOverviewLimit($data['contentFieldset']['overviewLimit']);
         }
     }
 }
