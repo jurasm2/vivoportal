@@ -35,6 +35,12 @@ class Overview extends AbstractForm implements EditorInterface, PersistableInter
     protected $overviewType;
 
     /**
+     * Overview items separator
+     * @var string
+     */
+    protected $overviewItemsSeparator = "\r\n";
+
+    /**
      * Constructor
      * @param Api\Document $documentApi
      * @param ComponentStatePersistor $statePersistor
@@ -183,7 +189,10 @@ class Overview extends AbstractForm implements EditorInterface, PersistableInter
         $contentFieldset    = $form->get('contentFieldset');
         if ($form->get('overviewType')->getValue() == OverviewModel::TYPE_STATIC) {
             //Static
-            $contentFieldset->get('overviewItems')->setValue(implode('\n', $overviewModel->getOverviewItems()));
+            $contentFieldset->get('overviewItems')->setValue(implode($this->overviewItemsSeparator,
+                                                                     $overviewModel->getOverviewItems())
+            );
+
         } else {
             //Dynamic
             $contentFieldset->get('overviewPath')->setValue($overviewModel->getOverviewPath());
@@ -204,7 +213,9 @@ class Overview extends AbstractForm implements EditorInterface, PersistableInter
         $overviewModel->setOverviewType($overviewType);
         if ($overviewType == OverviewModel::TYPE_STATIC) {
             //Static
-            $overviewModel->setOverviewItems(explode('\n', $data['contentFieldset']['overviewItems']));
+            $overviewModel->setOverviewItems(explode($this->overviewItemsSeparator,
+                                                     $data['contentFieldset']['overviewItems'])
+            );
         } else {
             //Dynamic
             $overviewModel->setOverviewPath($data['contentFieldset']['overviewPath']);
