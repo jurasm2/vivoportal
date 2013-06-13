@@ -184,6 +184,10 @@ class Overview extends Model\Content implements Model\SymRefDataExchangeInterfac
         if (array_key_exists('overview_path', $data)) {
             $this->setOverviewPath($data['overview_path']);
         }
+        //Overview items
+        if (array_key_exists('overview_items', $data)) {
+            $this->setOverviewItems($data['overview_items']);
+        }
     }
 
     /**
@@ -195,6 +199,7 @@ class Overview extends Model\Content implements Model\SymRefDataExchangeInterfac
         $data   = array(
             'overview_criteria' => $this->getOverviewCriteria(),
             'overview_path'     => $this->getOverviewPath(),
+            'overview_items'     => $this->getOverviewItems(),
         );
         return $data;
     }
