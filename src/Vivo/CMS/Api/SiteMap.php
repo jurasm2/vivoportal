@@ -5,6 +5,9 @@ use Vivo;
 use Vivo\Indexer\QueryBuilder;
 use Vivo\Indexer\Indexer as VivoIndexer;
 use Vivo\Indexer\Query\QueryInterface;
+use Vivo\Util\UrlHelper;
+
+use Zend\Stdlib\ArrayUtils;
 
 use SimpleXMLElement;
 
@@ -43,16 +46,64 @@ class SiteMap
     protected $cmsApi;
 
     /**
+     * Url helper
+     * @var UrlHelper
+     */
+    protected $urlHelper;
+
+    /**
+     * Default options
+     * @var array
+     */
+    protected $options = array(
+        // ports the vivoportal is running on
+        'ports' => array(
+            'http'  => 80,
+            'https' => 443,
+        ),
+    );
+
+    /**
+     * Reasonable defaults for default ports
+     */
+    protected $defaultPorts = array(
+        'http'  => 80,
+        'https' => 443,
+    );
+
+    /**
      * Constructor.
      * @param CMS $cmsApi
      * @param VivoIndexer $indexerApi
      * @param string $host
+     * @param UrlHelper
+     * @param array
      */
-    public function __construct(CMS $cmsApi, VivoIndexer $indexer, $host)
+    public function __construct(CMS $cmsApi, VivoIndexer $indexer, $host, UrlHelper $urlHelper, $options = array())
     {
+        $this->options = ArrayUtils::merge($this->options, $options);
+
         $this->cmsApi = $cmsApi;
         $this->indexer = $indexer;
         $this->host = $host;
+        $this->urlHelper = $urlHelper;
+    }
+
+    /**
+     * Returns port
+     * Returns string in format ':[port_number]' if vivoportal is NOT running on default port,
+     * otherwise returns empty string
+     * @param bool $isSecured
+     * @return string
+     */
+    protected function getPort($isSecured) {
+        $scheme = $isSecured ? 'https' : 'http';
+
+        $port = '';
+        if ($this->options['ports'][$scheme] != $this->defaultPorts[$scheme]) {
+            $port = ':'.$this->options['ports'][$scheme];
+        }
+        return $port;
     }
 
     /**
@@ -63,18 +114,29 @@ class SiteMap
      */
     protected function addChildren($hits, SimpleXMLElement $rootXmlElement)
     {
-        foreach ($hits as $hit) {
-            /* @var $document \Vivo\Indexer\Document */
-            $document = $hit->getDocument();
-            $path = $document->getFieldValue('\path');
-            $modified = $document->getFieldValue('\modified');
-            if (!($modified instanceof \DateTime)) {
-                $modified = new \DateTime();
-            }
+        if (is_array($hits) && !empty($hits)) {
+            foreach ($hits as $hit) {
+                /* @var $document \Vivo\Indexer\Document */
+                $document = $hit->getDocument();
+                $path = $document->getFieldValue('\path');
+                $secured = (bool) $document->getFieldValue('\secured');
+                $modified = $document->getFieldValue('\modified');
+                if (!($modified instanceof \DateTime)) {
+                    $modified = new \DateTime();
+                }
 
-            $url = $rootXmlElement->addChild('url');
-            $url->addChild('loc', 'http://' . $this->host . $this->cmsApi->getEntityRelPath($path));
-            $url->addChild('lastmod', $modified->format(\DateTime::W3C));
+                $url = $rootXmlElement->addChild('url');
+                $routeParams = array(
+                    'path' => $this->cmsApi->getEntityRelPath($path),
+                );
+                $url->addChild('loc',
+                               sprintf('%s%s%s%s',
+                                    ($secured ? 'https://' : 'http://'),
+                                    $this->host,
+                                    $this->getPort($secured),
+                                    $this->urlHelper->fromRoute('vivo/cms', $routeParams)));
+                $url->addChild('lastmod', $modified->format(\DateTime::W3C));
+            }
         }
     }
 
@@ -102,7 +164,7 @@ class SiteMap
     }
 
     /**
-     * Returns generated sitemap as xml string
+     * Returns generated sitemap as SimpleXMLElement object
      * @param string $sitePath
      * @return SimpleXMLElement
      */

@@ -13,7 +13,13 @@ class Hostname implements RouteInterface
 
     public function match(Request $request)
     {
-        return new RouteMatch(array('host' => $request->getUri()->getHost()));
+        /* @var $request \Zend\Http\PhpEnvironment\Request */
+        $routeMatchParams = array(
+            'scheme' => $request->getUri()->getScheme(),
+            'host' => $request->getUri()->getHost(),
+            'port' => $request->getUri()->getPort(),
+        );
+        return new RouteMatch($routeMatchParams);
     }
 
     public static function factory($options = array())

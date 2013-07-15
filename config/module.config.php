@@ -280,6 +280,7 @@ return array(
             'mime'                      => 'Vivo\Util\MIMEFactory',
             'indexer_events'            => 'Vivo\Indexer\EventManagerFactory',
             'Vivo\nav_overview_defaults_processor' => 'Vivo\Service\EntityProcessor\NavAndOverviewDefaultsFactory',
+            'Vivo\secured_defaults_processor' => 'Vivo\Service\EntityProcessor\SecuredDefaultsFactory',
             'Vivo\repository_storage'   => 'Vivo\Repository\RepositoryStorageFactory',
         ),
         'aliases' => array(
@@ -921,6 +922,13 @@ return array(
                 'multi'         => false,
             ),
             '\allowListingInOverview'   => array(
+                'type'          => Vivo\Indexer\IndexerInterface::FIELD_TYPE_STRING,
+                'indexed'       => true,
+                'stored'        => true,
+                'tokenized'     => false,
+                'multi'         => false,
+            ),
+            '\secured'   => array(
                 'type'          => Vivo\Indexer\IndexerInterface::FIELD_TYPE_STRING,
                 'indexed'       => true,
                 'stored'        => true,

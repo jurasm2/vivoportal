@@ -32,16 +32,15 @@ class UtilController extends AbstractActionController
     }
 
     /**
-     * Obtains content of sitemap.xml
+     * Returns xml response of generated sitemap
      * @return mixed
      */
     public function sitemapAction()
     {
-
         $response = $this->getResponse();
         $xml = $this->siteMapApi->getSiteMap($this->sitePath);
-        $response->setContent($xml);
         $response->getHeaders()->addHeaderLine('Content-Type', 'text/xml');
+        $response->setContent($xml);
         return $response;
     }
 
