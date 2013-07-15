@@ -37,17 +37,21 @@ class SiteMap
     protected $host;
 
     /**
+     * Cms API
+     * @var CMS
+     */
+    protected $cmsApi;
+
+    /**
      * Constructor.
      * @param CMS $cmsApi
      * @param VivoIndexer $indexerApi
      * @param string $host
      */
-    public function __construct(CMS $cmsApi,
-                                VivoIndexer $indexer,
-                                $host)
+    public function __construct(CMS $cmsApi, VivoIndexer $indexer, $host)
     {
-        $this->cmsApi       = $cmsApi;
-        $this->indexer   = $indexer;
+        $this->cmsApi = $cmsApi;
+        $this->indexer = $indexer;
         $this->host = $host;
     }
 
@@ -83,16 +87,16 @@ class SiteMap
     {
         $qb = new QueryBuilder();
 
-        $query      = $qb->cond(sprintf('%s/*', $sitePath), '\path');
-        $query      = $qb->andX($query, $qb->cond('Vivo\CMS\Model\Document', '\class'));
-        $query      = $qb->andX($query, $qb->cond(1, '\Vivo\CMS\Model\Document\allowListingInSitemap'));
-        $query      = $qb->andX($query, $qb->notX($qb->cond('*/ROOT/Components/*', '\path')));
-        $query      = $qb->andX($query, $qb->notX($qb->cond('*/ROOT/Layouts/*', '\path')));
-        $query      = $qb->andX($query, $qb->notX($qb->cond('*/ROOT/Files/*', '\path')));
-        $query      = $qb->andX($query, $qb->notX($qb->cond('*/ROOT/Trash/*', '\path')));
-        $query      = $qb->andX($query, $qb->notX($qb->cond('*/ROOT/system', '\path')));
-        $query      = $qb->andX($query, $qb->notX($qb->cond('*/ROOT/system/*', '\path')));
-        $query      = $qb->andX($query, $qb->cond('*', '\publishedContents'));
+        $query = $qb->cond(sprintf('%s/*', $sitePath), '\path');
+        $query = $qb->andX($query, $qb->cond('Vivo\CMS\Model\Document', '\class'));
+        $query = $qb->andX($query, $qb->cond(1, '\Vivo\CMS\Model\Document\allowListingInSitemap'));
+        $query = $qb->andX($query, $qb->notX($qb->cond('*/ROOT/Components/*', '\path')));
+        $query = $qb->andX($query, $qb->notX($qb->cond('*/ROOT/Layouts/*', '\path')));
+        $query = $qb->andX($query, $qb->notX($qb->cond('*/ROOT/Files/*', '\path')));
+        $query = $qb->andX($query, $qb->notX($qb->cond('*/ROOT/Trash/*', '\path')));
+        $query = $qb->andX($query, $qb->notX($qb->cond('*/ROOT/system', '\path')));
+        $query = $qb->andX($query, $qb->notX($qb->cond('*/ROOT/system/*', '\path')));
+        $query = $qb->andX($query, $qb->cond('*', '\publishedContents'));
 
         return $query;
     }
@@ -100,7 +104,7 @@ class SiteMap
     /**
      * Returns generated sitemap as xml string
      * @param string $sitePath
-     * @return string
+     * @return SimpleXMLElement
      */
     public function getSiteMap($sitePath)
     {
@@ -124,6 +128,5 @@ class SiteMap
 
         return $rootXmlElement->asXML();
     }
-
 }
 
