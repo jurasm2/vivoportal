@@ -108,7 +108,7 @@ class SiteMap
         $solrQuery = $this->getSolrQuery($sitePath);
 
         $offset = 0;
-        $limit = 5;
+        $limit = 200;
 
         do {
             $queryParams =  array(
