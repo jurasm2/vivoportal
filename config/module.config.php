@@ -25,6 +25,19 @@ return array(
                         ),
                         'may_terminate' => true,
                     ),
+                    //route for sitemap
+                    //@example http://<sitehost>/sitemap.xml
+                    'sitemap' => array(
+                        'type' => 'Zend\Mvc\Router\Http\Literal',
+                        'options' => array(
+                            'route' => '/sitemap.xml',
+                            'defaults' => array(
+                                'controller' => 'util_controller',
+                                'action' => 'sitemap',
+                            ),
+                        ),
+                        'may_terminate' => true,
+                    ),
                     //route for frontend resources
                     //@example http://<sitehost>/.<moduleName>.<resourceType>/<path>
                     'resource' => array(
@@ -205,6 +218,7 @@ return array(
             'Vivo\CMS\Api\Document'     => 'Vivo\CMS\Api\DocumentFactory',
             'Vivo\CMS\Api\Indexer'      => 'Vivo\CMS\Api\IndexerFactory',
             'Vivo\CMS\Api\Site'         => 'Vivo\CMS\Api\SiteFactory',
+            'Vivo\CMS\Api\SiteMap'      => 'Vivo\CMS\Api\SiteMapFactory',
             'Vivo\CMS\Api\Util'         => 'Vivo\CMS\Api\UtilFactory',
             'Vivo\CMS\Api\Content\File'       => 'Vivo\CMS\Api\Content\FileFactory',
             'Vivo\CMS\Api\Content\Fileboard'  => 'Vivo\CMS\Api\Content\FileboardFactory',
@@ -288,6 +302,7 @@ return array(
         'factories' => array(
             'cms_front_controller'      => 'Vivo\CMS\FrontControllerFactory',
             'resource_front_controller' => 'Vivo\Controller\ResourceFrontControllerFactory',
+            'util_controller'           => 'Vivo\Controller\UtilControllerFactory',
             'cli_module'                => 'Vivo\Service\Controller\CLI\CLIModuleControllerFactory',
             'cli_repository'            => 'Vivo\Service\Controller\CLI\CLIRepositoryControllerFactory',
             'cli_cms'                   => 'Vivo\Service\Controller\CLI\CLICmsControllerFactory',
