@@ -15,7 +15,7 @@ use Zend\Cache\Storage\StorageInterface as Cache;
 /**
  * SiteMap UI component
  */
-class SiteMap extends Navigation
+class SiteMap extends AbstractNavigation
 {
     /**
      * Constructor

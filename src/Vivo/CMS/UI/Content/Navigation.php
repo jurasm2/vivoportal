@@ -260,7 +260,7 @@ class Navigation extends AbstractNavigation
     protected function sortDocuments($documents)
     {
         $currentDoc = $this->cmsEvent->getDocument();
-        if(method_exists($this->navModel, 'getNavigationSorting') && $this->navModel->getNavigationSorting() !== null) {
+        if($this->navModel->getNavigationSorting() !== null) {
             $sorting = $this->navModel->getNavigationSorting();
             $parentSorting = $currentDoc->getSorting();
             if(strpos($sorting, "parent") !== false && $parentSorting != null) {
