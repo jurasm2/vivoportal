@@ -65,6 +65,7 @@ class SiteMap
 
     /**
      * Reasonable defaults for default ports
+     * @var array
      */
     protected $defaultPorts = array(
         'http'  => 80,

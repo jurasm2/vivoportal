@@ -7,8 +7,8 @@ use Vivo\Service\EntityProcessorInterface;
 use Vivo\CMS\Model\Document;
 
 /**
- * NavAndOverviewDefaults
- * Sets navigation and overview defaults and stores the entity
+ * SecuredDefaults
+ * Sets secured property stores the entity
  */
 class SecuredDefaults implements EntityProcessorInterface
 {
