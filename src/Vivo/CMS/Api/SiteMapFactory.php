@@ -16,23 +16,11 @@ class SiteMapFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $cmsApi         = $serviceLocator->get('Vivo\CMS\Api\CMS');
-        $indexer         = $serviceLocator->get('indexer');
-        /* @var $siteEvent \Vivo\SiteManager\Event\SiteEvent */
-        $siteEvent = $serviceLocator->get('site_event');
-
+        $cmsApi = $serviceLocator->get('Vivo\CMS\Api\CMS');
+        $indexer = $serviceLocator->get('indexer');
         $urlHelper = $serviceLocator->get('Vivo\Util\UrlHelper');
 
-        $config = $serviceLocator->get('config');
-        $portConfig = array();
-        if (isset($config['setup']['ports']) && is_array($config['setup']['ports'])) {
-            $portConfig = $config['setup']['ports'];
-        }
-        $options = array('ports' => $portConfig);
-
-        $host = $siteEvent->getHost();
-
-        $siteMapApi = new SiteMap($cmsApi, $indexer, $host, $urlHelper, $options);
+        $siteMapApi = new SiteMap($cmsApi, $indexer, $urlHelper);
         return $siteMapApi;
     }
 }

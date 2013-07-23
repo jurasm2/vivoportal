@@ -7,8 +7,6 @@ use Vivo\Indexer\Indexer as VivoIndexer;
 use Vivo\Indexer\Query\QueryInterface;
 use Vivo\Util\UrlHelper;
 
-use Zend\Stdlib\ArrayUtils;
-
 use SimpleXMLElement;
 
 /**
@@ -34,12 +32,6 @@ class SiteMap
     protected $indexer;
 
     /**
-     * Host
-     * @var string
-     */
-    protected $host;
-
-    /**
      * Cms API
      * @var CMS
      */
@@ -52,59 +44,16 @@ class SiteMap
     protected $urlHelper;
 
     /**
-     * Default options
-     * @var array
-     */
-    protected $options = array(
-        // ports the vivoportal is running on
-        'ports' => array(
-            'http'  => 80,
-            'https' => 443,
-        ),
-    );
-
-    /**
-     * Reasonable defaults for default ports
-     * @var array
-     */
-    protected $defaultPorts = array(
-        'http'  => 80,
-        'https' => 443,
-    );
-
-    /**
      * Constructor.
      * @param CMS $cmsApi
      * @param VivoIndexer $indexerApi
-     * @param string $host
      * @param UrlHelper
-     * @param array
      */
-    public function __construct(CMS $cmsApi, VivoIndexer $indexer, $host, UrlHelper $urlHelper, $options = array())
+    public function __construct(CMS $cmsApi, VivoIndexer $indexer, UrlHelper $urlHelper)
     {
-        $this->options = ArrayUtils::merge($this->options, $options);
-
         $this->cmsApi = $cmsApi;
         $this->indexer = $indexer;
-        $this->host = $host;
         $this->urlHelper = $urlHelper;
-    }
-
-    /**
-     * Returns port
-     * Returns string in format ':[port_number]' if vivoportal is NOT running on default port,
-     * otherwise returns empty string
-     * @param bool $isSecured
-     * @return string
-     */
-    protected function getPort($isSecured) {
-        $scheme = $isSecured ? 'https' : 'http';
-
-        $port = '';
-        if ($this->options['ports'][$scheme] != $this->defaultPorts[$scheme]) {
-            $port = ':'.$this->options['ports'][$scheme];
-        }
-        return $port;
     }
 
     /**
@@ -130,12 +79,13 @@ class SiteMap
                 $routeParams = array(
                     'path' => $this->cmsApi->getEntityRelPath($path),
                 );
-                $url->addChild('loc',
-                               sprintf('%s%s%s%s',
-                                    ($secured ? 'https://' : 'http://'),
-                                    $this->host,
-                                    $this->getPort($secured),
-                                    $this->urlHelper->fromRoute('vivo/cms', $routeParams)));
+                $options = array(
+                    'full_url' => true,
+                    'settings' => array(
+                        'secured' => $secured
+                    )
+                );
+                $url->addChild('loc', $this->urlHelper->fromRoute('vivo/cms', $routeParams, $options));
                 $url->addChild('lastmod', $modified->format(\DateTime::W3C));
             }
         }
